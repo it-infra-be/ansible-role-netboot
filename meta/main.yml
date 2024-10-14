@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  role_name: <ROLE>
+  namespace: it_infra_be
+  author: Karon Pante <karon.pante@it-infra.be>
+  description: <ROLE_DESCRIPTION>
+  company: IT Infra
+  license: MIT
+  min_ansible_version: '2.15'
+  platforms:
+    - name: EL
+      versions:
+        - '9'
+  galaxy_tags: []
+
+# Dependencies will be executed before the task roles
+dependencies: []
+...
