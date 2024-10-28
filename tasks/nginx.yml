@@ -1,0 +1,32 @@
+---
+- name: Set SELinux context for Nginx root directory
+  community.general.sefcontext:
+    target: '{{ netboot_webroot }}(/.*)?'
+    setype: httpd_sys_content_t
+    state: present
+  register: __registered_netboot_www_selinux
+
+- name: Create Nginx root directory
+  ansible.builtin.file:
+    path: '{{ netboot_webroot }}'
+    state: directory
+    owner: nginx
+    group: nginx
+    setype: _default
+    mode: '0755'
+
+- name: Configure Nginx
+  ansible.builtin.template:
+    src: etc/nginx/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart nginx
+
+- name: Start and enable Nginx service
+  ansible.builtin.systemd_service:
+    state: started
+    enabled: true
+    name: nginx
+...

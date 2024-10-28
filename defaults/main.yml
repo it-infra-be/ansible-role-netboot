@@ -1,2 +1,34 @@
 ---
+# TFTP
+netboot_tftp_root: /var/lib/tftpboot
+
+# Nginx
+netboot_nginx_ipv4: '*'
+netboot_nginx_ipv6: '[::]'
+netboot_nginx_port: 80
+netboot_webroot: /www
+
+# PXELinux
+netboot_pxelinux_files:
+  - /tftpboot/pxelinux.0
+  - /tftpboot/ldlinux.c32
+  - /tftpboot/libutil.c32
+  - /tftpboot/menu.c32
+  - /tftpboot/memdisk
+
+# GRUB2
+netboot_grub2_files:
+  - /boot/efi/EFI/almalinux/shim.efi
+  - /boot/efi/EFI/almalinux/grubx64.efi
+
+# iPXE
+netboot_ipxe_files:
+  - /usr/share/ipxe/undionly.kpxe
+  - /usr/share/ipxe/ipxe.lkrn
+  - /usr/share/ipxe/ipxe-x86_64.efi
+  - /usr/share/ipxe/ipxe-snponly-x86_64.efi
+
+# DHCP
+netboot_dhcp_authoritative: false
+netboot_dhcp6_authoritative: false
 ...

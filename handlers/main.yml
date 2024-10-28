@@ -1,2 +1,31 @@
 ---
+- name: Restart Nginx
+  ansible.builtin.systemd_service:
+    name: nginx
+    state: restarted
+  listen: restart nginx
+
+- name: Restart TFTP server
+  ansible.builtin.systemd_service:
+    name: tftp
+    state: restarted
+  listen: restart tftp
+
+- name: Reload AutoFS
+  ansible.builtin.systemd_service:
+    name: autofs
+    state: reloaded
+  listen: reload autofs
+
+- name: Restart IPv4 DHCP server
+  ansible.builtin.systemd_service:
+    name: dhcpd
+    state: restarted
+  listen: restart dhcpd
+
+- name: Restart IPv6 DHCP server
+  ansible.builtin.systemd_service:
+    name: dhcpd6
+    state: restarted
+  listen: restart dhcpd6
 ...

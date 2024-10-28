@@ -1,0 +1,55 @@
+---
+# HTTP
+- name: HTTP - Create pxelinux directories
+  ansible.builtin.file:
+    path: '{{ netboot_webroot }}/pxelinux/pxelinux.cfg'
+    state: directory
+    owner: nginx
+    group: nginx
+    mode: '0755'
+
+- name: HTTP - Populate pxelinux directory
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: '{{ netboot_webroot }}/pxelinux'
+    remote_src: true
+    owner: nginx
+    group: nginx
+    mode: '0644'
+  loop: '{{ netboot_pxelinux_files }}'
+
+- name: HTTP - Create pxelinux configuration file
+  ansible.builtin.template:
+    src: pxelinux/pxelinux.cfg/default.j2
+    dest: '{{ netboot_webroot }}/pxelinux/pxelinux.cfg/default'
+    owner: nginx
+    group: nginx
+    mode: '0644'
+
+# TFTP
+- name: TFTP - Create pxelinux directories
+  ansible.builtin.file:
+    path: '{{ netboot_tftp_root }}/pxelinux/pxelinux.cfg'
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: TFTP - Populate pxelinux directory
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: '{{ netboot_tftp_root }}/pxelinux'
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0644'
+  loop: '{{ netboot_pxelinux_files }}'
+
+- name: TFTP - Create pxelinux configuration file
+  ansible.builtin.template:
+    src: pxelinux/pxelinux.cfg/default.j2
+    dest: '{{ netboot_tftp_root }}/pxelinux/pxelinux.cfg/default'
+    owner: root
+    group: root
+    mode: '0644'
+...

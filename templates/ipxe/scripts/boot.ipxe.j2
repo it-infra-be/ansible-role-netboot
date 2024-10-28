@@ -1,0 +1,72 @@
+#!ipxe
+
+{{ ansible_managed | comment }}
+
+# Based on: https://gist.github.com/robinsmidsrod/2234639
+
+# Some menu defaults
+set menu-timeout 10000
+set menu-default exit
+
+# Figure out if client is 64-bit capable
+cpuid --ext 29 && set arch x64 || set arch x86
+cpuid --ext 29 && set archl amd64 || set archl i386
+
+###################### MAIN MENU ####################################
+
+:start
+menu iPXE boot menu
+item --gap --             ------------------------- Operating systems ------------------------------
+{%- if netboot_ipxe_items is defined +%}
+{%- for netboot_ipxe_item in netboot_ipxe_items +%}
+item{% if netboot_ipxe_item.key is defined %} --key {{ netboot_ipxe_item.key }}{% endif %} {{ netboot_ipxe_item.item }} {{ netboot_ipxe_item.title }}
+{%- endfor +%}
+{%- endif +%}
+item --gap --             ------------------------- Advanced options -------------------------------
+item --key c config       Configure settings
+item shell                Drop to iPXE shell
+item reboot               Reboot computer
+item
+item --key x exit         Exit iPXE and continue BIOS boot
+choose --timeout ${menu-timeout} --default ${menu-default} selected || goto cancel
+set menu-timeout 0
+goto ${selected}
+
+:cancel
+echo You cancelled the menu, dropping you to a shell
+
+:shell
+echo Type 'exit' to get the back to the menu
+shell
+set menu-timeout 0
+set submenu-timeout 0
+goto start
+
+:failed
+echo Booting failed, dropping to shell
+goto shell
+
+:reboot
+reboot
+
+:exit
+exit
+
+:config
+config
+goto start
+
+:back
+set submenu-timeout 0
+clear submenu-default
+goto start
+
+############ MAIN MENU ITEMS ############
+
+{%- if netboot_ipxe_items is defined +%}
+{%- for netboot_ipxe_item in netboot_ipxe_items +%}
+:{{ netboot_ipxe_item.item }}
+{{ netboot_ipxe_item.script }}
+
+{%- endfor +%}
+{%- endif +%}

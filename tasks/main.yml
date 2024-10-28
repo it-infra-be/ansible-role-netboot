@@ -1,2 +1,60 @@
 ---
+- name: Gathering service facts
+  ansible.builtin.service_facts:
+  tags: always
+
+- name: Install netboot packages
+  ansible.builtin.dnf:
+    name:
+      - dhcp-server
+      - tftp-server
+      - nginx
+      - syslinux-tftpboot
+      - autofs
+      - ipxe-bootimgs-x86
+    state: present
+  tags: always
+
+- name: Import DHCP configuration
+  ansible.builtin.import_tasks: dhcp.yml
+  tags: dhcp
+
+- name: Import TFTP configuration
+  ansible.builtin.import_tasks: tftp.yml
+  tags: tftp
+
+- name: Import Nginx configuration
+  ansible.builtin.import_tasks: nginx.yml
+  tags: nginx
+
+- name: Import AutoFS configuration
+  ansible.builtin.import_tasks: autofs.yml
+  tags: autofs
+
+- name: Import PXELinux configuration
+  ansible.builtin.import_tasks: pxelinux.yml
+  tags: pxelinux
+
+- name: Import GRUB2 configuration
+  ansible.builtin.import_tasks: grub2.yml
+  tags: grub2
+
+- name: Import iPXE configuration
+  ansible.builtin.import_tasks: ipxe.yml
+  tags: ipxe
+
+- name: Allow netboot services in firewall
+  ansible.posix.firewalld:
+    service: '{{ item }}'
+    permanent: true
+    immediate: true
+    state: enabled
+  loop:
+    - tftp
+    - http
+    - https
+    - dhcp
+    - dhcpv6
+  when: ansible_facts.services['firewalld.service'].state == 'running'
+  tags: always
 ...
