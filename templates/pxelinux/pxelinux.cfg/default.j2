@@ -1,0 +1,16 @@
+{{ ansible_managed | comment }}
+
+default menu.c32
+prompt 0
+timeout 100
+
+{%- if netboot_pxelinux_labels +%}
+{%- for netboot_pxelinux_label_key, netboot_pxelinux_label_value in netboot_pxelinux_labels|items +%}
+label {{ netboot_pxelinux_label_key }}
+  {{ netboot_pxelinux_label_value | indent(2) }}
+{%- endfor +%}
+{%- else +%}
+label local
+    menu label Boot from ^local drive
+    localboot 0xffff
+{%- endif +%}

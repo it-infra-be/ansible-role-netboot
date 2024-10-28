@@ -1,0 +1,25 @@
+{{ ansible_managed | comment }}
+
+option dhcp6.bootfile-url code 59 = string;
+option dhcp6.vendor-class code 16 = {integer 32, integer 16, string};
+
+# If this DHCP server is the official DHCP server for the local
+# network, the authoritative directive should be uncommented.
+{% if not netboot_dhcp6_authoritative %}#{% endif %}authoritative;
+
+{%- if netboot_dhcp6_subnets is defined +%}
+{% for subnet in netboot_dhcp6_subnets +%}
+subnet6 {{ subnet.subnet6 }} {
+  {%- for option_key, option_value in subnet.options | items +%}
+  option {{ option_key }} {{ option_value }};
+  {%- endfor +%}
+  range6 {{ subnet.range6 }};
+  {%- for class_key, class_value in subnet.classes | items +%}
+
+  class "{{ class_key }}" {
+    {{ class_value | indent(4) }}  }
+  {%- endfor +%}
+{%- endfor +%}
+{%- endif +%}
+}
+

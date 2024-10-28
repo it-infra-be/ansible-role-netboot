@@ -1,0 +1,11 @@
+{{ ansible_managed | comment }}
+
+set timeout=10
+
+{%- if netboot_grub2_entries is defined +%}
+{%- for netboot_grub2_entry in netboot_grub2_entries +%}
+menuentry '{{ netboot_grub2_entry['title'] }}' {
+  {{ netboot_grub2_entry['entry'] | indent(2) }}
+}
+{%- endfor +%}
+{%- endif +%}

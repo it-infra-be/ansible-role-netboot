@@ -1,0 +1,55 @@
+---
+# HTTP
+- name: HTTP - Create grub2 directory
+  ansible.builtin.file:
+    path: '{{ netboot_webroot }}/grub2'
+    state: directory
+    owner: nginx
+    group: nginx
+    mode: '0755'
+
+- name: HTTP - Populate grub2 directory
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: '{{ netboot_webroot }}/grub2'
+    remote_src: true
+    owner: nginx
+    group: nginx
+    mode: '0644'
+  loop: '{{ netboot_grub2_files }}'
+
+- name: HTTP - Create grub2 configuration file
+  ansible.builtin.template:
+    src: grub2/grub.cfg.j2
+    dest: '{{ netboot_webroot }}/grub2/grub.cfg'
+    owner: nginx
+    group: nginx
+    mode: '0644'
+
+# TFTP
+- name: TFTP - Create grub2 directory
+  ansible.builtin.file:
+    path: '{{ netboot_tftp_root }}/grub2'
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: TFTP - Populate grub2 directory
+  ansible.builtin.copy:
+    src: '{{ item }}'
+    dest: '{{ netboot_tftp_root }}/grub2'
+    remote_src: true
+    owner: root
+    group: root
+    mode: '0644'
+  loop: '{{ netboot_grub2_files }}'
+
+- name: TFTP - Create grub2 configuration file
+  ansible.builtin.template:
+    src: grub2/grub.cfg.j2
+    dest: '{{ netboot_tftp_root }}/grub2/grub.cfg'
+    owner: root
+    group: root
+    mode: '0644'
+...
